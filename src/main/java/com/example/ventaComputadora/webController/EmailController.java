@@ -2,25 +2,36 @@ package com.example.ventaComputadora.webController;
 
 import com.example.ventaComputadora.services.EmailService;
 import jakarta.mail.MessagingException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controlador REST para manejar el envío de correos electrónicos.
+ */
 @RestController
 @RequestMapping("/email")
-@CrossOrigin("*")
+@CrossOrigin("*") // Permite solicitudes de cualquier origen
+@RequiredArgsConstructor
 public class EmailController {
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
+    /**
+     * Envía un correo electrónico.
+     *
+     * @param to Dirección de correo del destinatario.
+     * @param subject Asunto del correo.
+     * @param text Cuerpo del correo.
+     * @return Respuesta indicando el estado del envío.
+     */
     @PostMapping("/send")
     public ResponseEntity<String> sendEmail(@RequestParam String to, @RequestParam String subject, @RequestParam String text) {
         try {
             emailService.sendEmail(to, subject, text);
-            return ResponseEntity.ok("Email sent successfully");
+            return ResponseEntity.ok("Email enviado exitosamente");
         } catch (MessagingException e) {
-            return ResponseEntity.status(500).body("Failed to send email: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error al enviar el email: " + e.getMessage());
         }
     }
 }

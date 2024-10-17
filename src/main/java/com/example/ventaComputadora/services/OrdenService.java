@@ -22,6 +22,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio para manejar las órdenes de compra.
+ */
 @Service
 @RequiredArgsConstructor
 public class OrdenService {
@@ -29,6 +32,13 @@ public class OrdenService {
     private final UsuarioRepository usuarioRepository;
     private final ProductoRepository productoRepository;
 
+    /**
+     * Crea una nueva orden de compra.
+     *
+     * @param usuarioId ID del usuario que realiza la orden.
+     * @param productoIds IDs de los productos en la orden.
+     * @return La orden creada.
+     */
     @Transactional
     public Orden crearOrden(Long usuarioId, Set<Long> productoIds) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -45,6 +55,13 @@ public class OrdenService {
         return ordenRepository.save(orden);
     }
 
+    /**
+     * Agrega un producto a la orden activa del usuario.
+     *
+     * @param usuarioId ID del usuario.
+     * @param productoId ID del producto a agregar.
+     * @return La orden actualizada.
+     */
     @Transactional
     public Orden agregarProductoALaOrden(Long usuarioId, Long productoId) {
         Optional<Orden> ordenActiva = obtenerOrdenActiva(usuarioId);
@@ -62,6 +79,13 @@ public class OrdenService {
         return ordenRepository.save(orden);
     }
 
+    /**
+     * Elimina un producto de una orden.
+     *
+     * @param ordenId ID de la orden.
+     * @param productoId ID del producto a eliminar.
+     * @return La orden actualizada.
+     */
     @Transactional
     public Orden eliminarProductoDeLaOrden(Long ordenId, Long productoId) {
         Orden orden = ordenRepository.findById(ordenId)
@@ -78,6 +102,12 @@ public class OrdenService {
         return ordenRepository.save(orden);
     }
 
+    /**
+     * Lista todas las órdenes de un usuario.
+     *
+     * @param usuarioId ID del usuario.
+     * @return Lista de órdenes del usuario.
+     */
     @Transactional(readOnly = true)
     public List<OrdenDTO> listarOrdenesPorUsuario(Long usuarioId) {
         List<Orden> ordenes = ordenRepository.findByUsuarioId(usuarioId);
@@ -85,6 +115,12 @@ public class OrdenService {
         return ordenes.stream().map(this::convertirADTO).collect(Collectors.toList());
     }
 
+    /**
+     * Convierte una orden a un DTO.
+     *
+     * @param orden Orden a convertir.
+     * @return DTO de la orden.
+     */
     public OrdenDTO convertirADTO(Orden orden) {
         double montoTotal = orden.getProductos().stream()
                 .mapToDouble(Producto::getPrecio)
@@ -124,12 +160,24 @@ public class OrdenService {
         return productoDTO;
     }
 
+    /**
+     * Obtiene la orden activa de un usuario.
+     *
+     * @param usuarioId ID del usuario.
+     * @return La orden activa del usuario.
+     */
     @Transactional(readOnly = true)
     public Optional<Orden> obtenerOrdenActiva(Long usuarioId) {
         return ordenRepository.findByUsuarioIdAndEstado(usuarioId, EstadoOrden.CARRITO)
                 .stream().findFirst();
     }
 
+    /**
+     * Procesa una orden, cambiando su estado a pagado.
+     *
+     * @param ordenId ID de la orden.
+     * @return La orden procesada.
+     */
     @Transactional
     public Orden procesarOrden(Long ordenId) {
         Orden orden = ordenRepository.findById(ordenId)
@@ -138,6 +186,13 @@ public class OrdenService {
         return ordenRepository.save(orden);
     }
 
+    /**
+     * Actualiza una orden.
+     *
+     * @param id ID de la orden.
+     * @param nuevaOrden Nueva información de la orden.
+     * @return La orden actualizada.
+     */
     @Transactional
     public Orden actualizarOrden(Long id, Orden nuevaOrden) {
         Orden orden = ordenRepository.findById(id)
@@ -147,6 +202,11 @@ public class OrdenService {
         return ordenRepository.save(orden);
     }
 
+    /**
+     * Elimina una orden.
+     *
+     * @param id ID de la orden a eliminar.
+     */
     @Transactional
     public void eliminarOrden(Long id) {
         ordenRepository.deleteById(id);

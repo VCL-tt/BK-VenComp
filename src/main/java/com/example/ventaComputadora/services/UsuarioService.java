@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Servicio para manejar usuarios.
+ */
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
@@ -24,6 +27,12 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Autentica un usuario y devuelve un token JWT.
+     *
+     * @param request Información de inicio de sesión.
+     * @return Respuesta con el token JWT.
+     */
     public TokenResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         Usuario user = usuarioRepository.findByUsername(request.getUsername()).orElseThrow();
@@ -33,6 +42,12 @@ public class UsuarioService {
                 .build();
     }
 
+    /**
+     * Agrega un nuevo usuario y devuelve un token JWT.
+     *
+     * @param usuario Información del usuario.
+     * @return Respuesta con el token JWT.
+     */
     public TokenResponse addUsuario(Usuario usuario) {
         Usuario user = Usuario.builder()
                 .username(usuario.getUsername())
@@ -53,10 +68,22 @@ public class UsuarioService {
                 .build();
     }
 
+    /**
+     * Obtiene un usuario por su ID.
+     *
+     * @param id ID del usuario.
+     * @return El usuario encontrado.
+     */
     public Optional<Usuario> getUsuarioById(Long id) {
         return usuarioRepository.findById(id);
     }
 
+    /**
+     * Obtiene el perfil de un usuario por su ID.
+     *
+     * @param id ID del usuario.
+     * @return DTO del perfil del usuario.
+     */
     public UsuarioDTO getPerfilUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
         if (usuario == null) {
@@ -76,6 +103,13 @@ public class UsuarioService {
         );
     }
 
+    /**
+     * Actualiza la información de un usuario.
+     *
+     * @param usuarioDTO Nueva información del usuario.
+     * @param id ID del usuario.
+     * @return El usuario actualizado.
+     */
     @Transactional
     public Usuario updateUsuario(UsuarioDTO usuarioDTO, Long id) {
         Usuario usuarioExistente = usuarioRepository.findById(id).orElseThrow(
@@ -98,6 +132,11 @@ public class UsuarioService {
         }
     }
 
+    /**
+     * Elimina un usuario por su ID.
+     *
+     * @param id ID del usuario.
+     */
     @Transactional
     public void deleteById(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(

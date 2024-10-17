@@ -10,12 +10,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para manejar las operaciones relacionadas con las especificaciones.
+ */
 @RestController
 @RequestMapping("/especificaciones")
 @RequiredArgsConstructor
 public class EspecificacionController {
     private final EspecificacionService especificacionService;
 
+    /**
+     * Registra una nueva especificación.
+     *
+     * @param especificacion Detalles de la especificación a registrar.
+     * @return La especificación registrada.
+     */
     @PostMapping("/registrar")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Especificacion> registrarEspecificacion(@RequestBody Especificacion especificacion) {
@@ -29,6 +38,12 @@ public class EspecificacionController {
         return ResponseEntity.ok(nuevaEspecificacion);
     }
 
+    /**
+     * Elimina una especificación por su ID.
+     *
+     * @param id ID de la especificación a eliminar.
+     * @return Respuesta vacía si la eliminación fue exitosa.
+     */
     @DeleteMapping("/eliminar/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> eliminarEspecificacion(@PathVariable Long id) {
@@ -40,6 +55,13 @@ public class EspecificacionController {
         }
     }
 
+    /**
+     * Actualiza una especificación.
+     *
+     * @param id ID de la especificación a actualizar.
+     * @param especificacion Nueva información de la especificación.
+     * @return La especificación actualizada.
+     */
     @PutMapping("/actualizar/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Especificacion> actualizarEspecificacion(@PathVariable Long id, @RequestBody Especificacion especificacion) {
@@ -47,6 +69,12 @@ public class EspecificacionController {
         return ResponseEntity.ok(especificacionActualizada);
     }
 
+    /**
+     * Busca especificaciones por nombre.
+     *
+     * @param nombre Nombre de la especificación.
+     * @return Lista de especificaciones que coinciden con el nombre.
+     */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/buscar")
     public ResponseEntity<List<EspecificacionDTO>> buscarEspecificacionesPorNombre(@RequestParam String nombre) {
@@ -54,6 +82,13 @@ public class EspecificacionController {
         return ResponseEntity.ok(especificaciones);
     }
 
+    /**
+     * Busca especificaciones por marca y tipo.
+     *
+     * @param marca Marca de la especificación.
+     * @param tipo Tipo de la especificación.
+     * @return Lista de especificaciones que coinciden con la marca y tipo.
+     */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/filtrar")
     public ResponseEntity<List<EspecificacionDTO>> buscarEspecificacionesPorMarcaYTipo(
@@ -66,6 +101,11 @@ public class EspecificacionController {
         return ResponseEntity.ok(especificaciones);
     }
 
+    /**
+     * Lista todas las especificaciones.
+     *
+     * @return Lista de todas las especificaciones.
+     */
     @GetMapping("/listar")
     public ResponseEntity<List<EspecificacionDTO>> listarEspecificaciones() {
         List<EspecificacionDTO> especificaciones = especificacionService.listarEspecificaciones();

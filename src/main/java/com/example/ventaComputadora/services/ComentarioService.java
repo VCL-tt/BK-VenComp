@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Servicio para manejar los comentarios.
+ */
 @Service
 @RequiredArgsConstructor
 public class ComentarioService {
@@ -20,6 +23,14 @@ public class ComentarioService {
     private final ProductoRepository productoRepository;
     private final UsuarioRepository usuarioRepository;
 
+    /**
+     * Agrega un nuevo comentario a un producto por un usuario.
+     *
+     * @param usuarioId ID del usuario que agrega el comentario.
+     * @param productoId ID del producto al que se agrega el comentario.
+     * @param contenido Contenido del comentario.
+     * @return El comentario agregado.
+     */
     @Transactional
     public Comentario agregarComentario(Long usuarioId, Long productoId, String contenido) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -37,6 +48,12 @@ public class ComentarioService {
         return comentarioRepository.save(comentario);
     }
 
+    /**
+     * Lista todos los comentarios de un producto.
+     *
+     * @param productoId ID del producto.
+     * @return Lista de comentarios del producto.
+     */
     @Transactional(readOnly = true)
     public List<Comentario> listarComentariosPorProducto(Long productoId) {
         Producto producto = productoRepository.findById(productoId)
@@ -45,6 +62,14 @@ public class ComentarioService {
         return comentarioRepository.findAllByProducto(producto);
     }
 
+    /**
+     * Edita el contenido de un comentario.
+     *
+     * @param comentarioId ID del comentario a editar.
+     * @param usuarioId ID del usuario que edita el comentario.
+     * @param nuevoContenido Nuevo contenido del comentario.
+     * @return El comentario editado.
+     */
     @Transactional
     public Comentario editarComentario(Long comentarioId, Long usuarioId, String nuevoContenido) {
         Comentario comentario = comentarioRepository.findById(comentarioId)
@@ -59,6 +84,12 @@ public class ComentarioService {
         return comentarioRepository.save(comentario);
     }
 
+    /**
+     * Elimina un comentario.
+     *
+     * @param comentarioId ID del comentario a eliminar.
+     * @param usuarioId ID del usuario que elimina el comentario.
+     */
     @Transactional
     public void eliminarComentario(Long comentarioId, Long usuarioId) {
         Comentario comentario = comentarioRepository.findById(comentarioId)

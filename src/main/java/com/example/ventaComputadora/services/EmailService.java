@@ -7,12 +7,23 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+/**
+ * Servicio para enviar correos electrónicos.
+ */
 @Service
 public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
 
+    /**
+     * Envía un correo electrónico.
+     *
+     * @param to Dirección de correo del destinatario.
+     * @param subject Asunto del correo.
+     * @param text Contenido del correo.
+     * @throws MessagingException Si ocurre un error al enviar el correo.
+     */
     public void sendEmail(String to, String subject, String text) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);

@@ -11,7 +11,7 @@ import com.example.ventaComputadora.infra.repository.EspecificacionRepository;
 import com.example.ventaComputadora.infra.repository.ProductoEspecificacionRepository;
 import com.example.ventaComputadora.infra.repository.ProductoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,24 +23,25 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio para manejar los productos.
+ */
 @Service
+@RequiredArgsConstructor
 public class ProductoService {
     private final ProductoRepository productoRepository;
     private final EspecificacionRepository especificacionRepository;
     private final ProductoEspecificacionRepository productoEspecificacionRepository;
 
-
     private static final Set<String> RAM_TYPES = Set.of("RAM", "Memoria RAM");
     private static final Set<String> PROCESSOR_TYPES = Set.of("Procesador", "CPU");
     private static final Set<String> GRAPHICS_CARD_TYPES = Set.of("Tarjeta Gráfica", "GPU");
 
-    @Autowired
-    public ProductoService(ProductoRepository productoRepository, EspecificacionRepository especificacionRepository, ProductoEspecificacionRepository productoEspecificacionRepository) {
-        this.productoRepository = productoRepository;
-        this.especificacionRepository = especificacionRepository;
-        this.productoEspecificacionRepository = productoEspecificacionRepository;
-    }
-
+    /**
+     * Lista los productos simplificados.
+     *
+     * @return Lista de productos simplificados.
+     */
     @Transactional(readOnly = true)
     public List<ProductoSimplificadoDTO> listarProductosSimplificados() {
         return productoRepository.findAllByOrderByNombreAsc().stream()
@@ -48,6 +49,13 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Agrega un nuevo producto.
+     *
+     * @param producto Producto a agregar.
+     * @param especificacionIds IDs de las especificaciones del producto.
+     * @return El producto agregado.
+     */
     @Transactional
     public Producto agregarProducto(Producto producto, Set<Long> especificacionIds) {
         if (productoRepository.findByNombreIgnoreCase(producto.getNombre()).isPresent()) {
@@ -70,17 +78,35 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
+    /**
+     * Elimina un producto.
+     *
+     * @param productoId ID del producto a eliminar.
+     */
     @Transactional
     public void eliminarProducto(Long productoId) {
         productoRepository.deleteById(productoId);
     }
 
+    /**
+     * Obtiene un producto por su ID.
+     *
+     * @param id ID del producto.
+     * @return El producto encontrado.
+     */
     @Transactional(readOnly = true)
     public Producto obtenerProductoPorId(Long id) {
         return productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
     }
 
+    /**
+     * Modifica las especificaciones de un producto.
+     *
+     * @param productoId ID del producto.
+     * @param especificacionIds Nuevas especificaciones del producto.
+     * @return El producto actualizado.
+     */
     @Transactional
     public Producto modificarEspecificaciones(Long productoId, Set<Long> especificacionIds) {
         Producto producto = productoRepository.findById(productoId)
@@ -104,11 +130,28 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
+    /**
+     * Busca productos por nombre o descripción.
+     *
+     * @param nombre Nombre o descripción del producto.
+     * @return Lista de productos que coinciden con el nombre o descripción.
+     */
     @Transactional(readOnly = true)
     public List<Producto> buscarProductosPorNombre(String nombre) {
         return productoRepository.findByNombreContainingIgnoreCaseOrDescripcionContainingIgnoreCase(nombre, nombre);
     }
 
+    /**
+     * Edita la información de un producto.
+     *
+     * @param id ID del producto a editar.
+     * @param nombre Nuevo nombre del producto.
+     * @param descripcion Nueva descripción del producto.
+     * @param precio Nuevo precio del producto.
+     * @param stock Nuevo stock del producto.
+     * @param imagen Nueva imagen del producto.
+     * @return El producto editado.
+     */
     @Transactional
     public Producto editarProducto(Long id, String nombre, String descripcion, double precio, int stock, String imagen) {
         Producto producto = productoRepository.findById(id)
@@ -122,6 +165,12 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
+    /**
+     * Convierte un producto a un DTO simplificado.
+     *
+     * @param producto Producto a convertir.
+     * @return DTO simplificado del producto.
+     */
     public ProductoSimplificadoDTO convertirASimplificadoDTO(Producto producto) {
         return new ProductoSimplificadoDTO(
                 producto.getId(),
@@ -154,7 +203,14 @@ public class ProductoService {
         );
     }
 
-
+    /**
+     * Agrega una especificación a un producto.
+     *
+     * @param productoId ID del producto.
+     * @param especificacionId ID de la especificación.
+     * @param cantidad Cantidad de la especificación.
+     * @return El producto actualizado.
+     */
     @Transactional
     public Producto agregarEspecificacion(Long productoId, Long especificacionId, int cantidad) {
         Producto producto = productoRepository.findById(productoId)
@@ -184,6 +240,13 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
+    /**
+     * Elimina una especificación de un producto.
+     *
+     * @param productoId ID del producto.
+     * @param especificacionId ID de la especificación.
+     * @return El producto actualizado.
+     */
     @Transactional
     public Producto eliminarEspecificacion(Long productoId, Long especificacionId) {
         Producto producto = productoRepository.findById(productoId)
@@ -205,12 +268,20 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
-    /////////////////////////////
+    /**
+     * Filtra los productos según las especificaciones y otros criterios.
+     *
+     * @param ram Tipos de RAM.
+     * @param procesador Tipos de procesador.
+     * @param tarjetaGrafica Tipos de tarjeta gráfica.
+     * @param precioMin Precio mínimo.
+     * @param precioMax Precio máximo.
+     * @param enStock Indica si el producto está en stock.
+     * @return Lista de productos filtrados.
+     */
     @Transactional(readOnly = true)
     public List<ProductoSimplificadoDTO> filtrarProductos(Set<String> ram, Set<String> procesador, Set<String> tarjetaGrafica, Double precioMin, Double precioMax, Boolean enStock) {
         List<Producto> productos = productoRepository.findAll();
-        System.out.println("Filtrando productos con RAM: " + ram + ", Procesador: " + procesador + ", Tarjeta Gráfica: " + tarjetaGrafica + ", PrecioMin: " + precioMin + ", PrecioMax: " + precioMax + ", EnStock: " + enStock);
-
         return productos.stream()
                 .filter(producto -> filtrarPorEspecificaciones(producto, ram, procesador, tarjetaGrafica))
                 .filter(producto -> precioMin == null || producto.getPrecio() >= precioMin)
@@ -220,6 +291,15 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Filtra los productos según las especificaciones.
+     *
+     * @param producto Producto a filtrar.
+     * @param ram Tipos de RAM.
+     * @param procesador Tipos de procesador.
+     * @param tarjetaGrafica Tipos de tarjeta gráfica.
+     * @return Verdadero si el producto cumple con los criterios, falso en caso contrario.
+     */
     private boolean filtrarPorEspecificaciones(Producto producto, Set<String> ram, Set<String> procesador, Set<String> tarjetaGrafica) {
         boolean coincide = true;
 

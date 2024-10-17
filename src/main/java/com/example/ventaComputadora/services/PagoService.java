@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Servicio para manejar los pagos.
+ */
 @Service
 @RequiredArgsConstructor
 public class PagoService {
@@ -25,6 +28,12 @@ public class PagoService {
     private final OrdenRepository ordenRepository;
     private static final Logger logger = LoggerFactory.getLogger(PagoService.class);
 
+    /**
+     * Realiza un pago.
+     *
+     * @param pago Información del pago.
+     * @return El pago realizado.
+     */
     @Transactional
     public Pago realizarPago(Pago pago) {
         Orden orden = ordenRepository.findById(pago.getOrden().getId())
@@ -51,11 +60,24 @@ public class PagoService {
         return nuevoPago;
     }
 
+    /**
+     * Lista los pagos de una orden.
+     *
+     * @param ordenId ID de la orden.
+     * @return Lista de pagos de la orden.
+     */
     @Transactional(readOnly = true)
     public List<Pago> listarPagosPorOrden(Long ordenId) {
         return pagoRepository.findByOrdenId(ordenId);
     }
 
+    /**
+     * Genera un comprobante de pago en formato PDF para una orden.
+     *
+     * @param ordenId ID de la orden.
+     * @return El comprobante de pago en un ByteArrayOutputStream.
+     * @throws DocumentException Si ocurre un error al generar el documento PDF.
+     */
     public ByteArrayOutputStream generarComprobantePorOrden(Long ordenId) throws DocumentException {
         List<Pago> pagos = pagoRepository.findByOrdenId(ordenId);
         if (pagos.isEmpty()) {

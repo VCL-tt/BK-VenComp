@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio para manejar los productos favoritos.
+ */
 @Service
 @RequiredArgsConstructor
 public class FavoritoService {
@@ -21,6 +24,13 @@ public class FavoritoService {
     private final UsuarioRepository usuarioRepository;
     private final ProductoRepository productoRepository;
 
+    /**
+     * Agrega un producto a los favoritos de un usuario.
+     *
+     * @param usuarioId ID del usuario.
+     * @param productoId ID del producto.
+     * @return El producto favorito agregado.
+     */
     @Transactional
     public Favorito agregarAFavoritos(Long usuarioId, Long productoId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -40,6 +50,12 @@ public class FavoritoService {
         return favoritoRepository.save(favorito);
     }
 
+    /**
+     * Lista los productos favoritos de un usuario.
+     *
+     * @param usuarioId ID del usuario.
+     * @return Lista de productos favoritos del usuario.
+     */
     @Transactional(readOnly = true)
     public List<FavoritoDTO> listarFavoritosPorUsuario(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -55,11 +71,22 @@ public class FavoritoService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Elimina un producto de los favoritos por su ID.
+     *
+     * @param favoritoId ID del favorito.
+     */
     @Transactional
     public void eliminarDeFavoritos(Long favoritoId) {
         favoritoRepository.deleteById(favoritoId);
     }
 
+    /**
+     * Elimina un producto de los favoritos de un usuario específico.
+     *
+     * @param usuarioId ID del usuario.
+     * @param productoId ID del producto.
+     */
     @Transactional
     public void eliminarDeFavoritosPorUsuarioYProducto(Long usuarioId, Long productoId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -72,5 +99,4 @@ public class FavoritoService {
 
         favoritoRepository.delete(favorito);
     }
-
 }

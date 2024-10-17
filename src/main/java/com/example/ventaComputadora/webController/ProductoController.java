@@ -17,12 +17,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador REST para manejar las operaciones relacionadas con los productos.
+ */
 @RestController
 @RequestMapping("/productos")
 @RequiredArgsConstructor
 public class ProductoController {
     private final ProductoService productoService;
 
+    /**
+     * Lista todos los productos simplificados.
+     *
+     * @return Lista de productos simplificados.
+     */
     @GetMapping("/listar")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ProductoSimplificadoDTO>> listarProductos() {
@@ -30,6 +38,12 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
+    /**
+     * Registra un nuevo producto.
+     *
+     * @param productoDTO Detalles del producto a registrar.
+     * @return El producto registrado.
+     */
     @PostMapping("/registrar")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> registrarProducto(@RequestBody ProductoDTO productoDTO) {
@@ -48,13 +62,24 @@ public class ProductoController {
         return ResponseEntity.ok(productoRegistrado);
     }
 
+    /**
+     * Elimina un producto por su ID.
+     *
+     * @param id ID del producto a eliminar.
+     * @return Respuesta vacía si la eliminación fue exitosa.
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
         productoService.eliminarProducto(id);
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Obtiene el catálogo completo de productos.
+     *
+     * @return Lista de productos simplificados.
+     */
     @GetMapping("/catalogo")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<ProductoSimplificadoDTO>> obtenerCatalogoCompleto() {
@@ -62,6 +87,12 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
+    /**
+     * Obtiene los detalles de un producto por su ID.
+     *
+     * @param id ID del producto.
+     * @return Los detalles del producto.
+     */
     @GetMapping("/{id}/detalles")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<ProductoSimplificadoDTO> obtenerDetallesDelProducto(@PathVariable Long id) {
@@ -70,6 +101,13 @@ public class ProductoController {
         return ResponseEntity.ok(productoSimplificadoDTO);
     }
 
+    /**
+     * Actualiza las especificaciones de un producto.
+     *
+     * @param id ID del producto.
+     * @param personalizacionDTO Detalles de la personalización del producto.
+     * @return El producto actualizado.
+     */
     @PutMapping("/{id}/especificaciones")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ProductoSimplificadoDTO> actualizarEspecificaciones(@PathVariable Long id, @RequestBody PersonalizacionDTO personalizacionDTO) {
@@ -78,6 +116,13 @@ public class ProductoController {
         return ResponseEntity.ok(productoSimplificadoDTO);
     }
 
+    /**
+     * Edita un producto.
+     *
+     * @param id ID del producto a editar.
+     * @param productoDTO Detalles del producto a editar.
+     * @return El producto editado.
+     */
     @PutMapping("/editar/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductoSimplificadoDTO> editarProducto(@PathVariable Long id, @RequestBody ProductoDTO productoDTO) {
@@ -97,6 +142,12 @@ public class ProductoController {
         }
     }
 
+    /**
+     * Busca productos por nombre.
+     *
+     * @param nombre Nombre del producto.
+     * @return Lista de productos que coinciden con el nombre.
+     */
     @GetMapping("/buscar")
     public ResponseEntity<List<ProductoSimplificadoDTO>> buscarProductos(@RequestParam String nombre) {
         List<ProductoSimplificadoDTO> productos = productoService.buscarProductosPorNombre(nombre)
@@ -106,6 +157,12 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
+    /**
+     * Registra un nuevo producto con especificaciones.
+     *
+     * @param productoDTO Detalles del producto a registrar.
+     * @return El producto registrado.
+     */
     @PostMapping("/registrar-con-especificaciones")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductoSimplificadoDTO> registrarProductoConEspecificaciones(@RequestBody ProductoDTO productoDTO) {
@@ -125,6 +182,14 @@ public class ProductoController {
         return ResponseEntity.ok(productoSimplificadoDTO);
     }
 
+    /**
+     * Agrega una especificación a un producto.
+     *
+     * @param productoId ID del producto.
+     * @param especificacionId ID de la especificación.
+     * @param cantidadMap Mapa con la cantidad de la especificación.
+     * @return El producto actualizado.
+     */
     @PutMapping("/{productoId}/agregarEspecificacion/{especificacionId}")
     public ResponseEntity<Producto> agregarEspecificacion(
             @PathVariable Long productoId,
@@ -135,6 +200,13 @@ public class ProductoController {
         return ResponseEntity.ok(productoActualizado);
     }
 
+    /**
+     * Elimina una especificación de un producto.
+     *
+     * @param productoId ID del producto.
+     * @param especificacionId ID de la especificación.
+     * @return El producto actualizado.
+     */
     @PutMapping("/{productoId}/eliminarEspecificacion/{especificacionId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductoSimplificadoDTO> eliminarEspecificacion(@PathVariable Long productoId, @PathVariable Long especificacionId) {
@@ -143,6 +215,12 @@ public class ProductoController {
         return ResponseEntity.ok(productoSimplificadoDTO);
     }
 
+    /**
+     * Filtra productos según criterios específicos.
+     *
+     * @param filtros Mapa de criterios de filtrado.
+     * @return Lista de productos filtrados.
+     */
     @PostMapping("/filtrar")
     public ResponseEntity<List<ProductoSimplificadoDTO>> filtrarProductos(@RequestBody Map<String, Object> filtros) {
         Set<String> ram = filtros.containsKey("ram") ? new HashSet<>((List<String>) filtros.get("ram")) : null;
@@ -155,5 +233,4 @@ public class ProductoController {
         List<ProductoSimplificadoDTO> productosFiltrados = productoService.filtrarProductos(ram, procesador, tarjetaGrafica, precioMin, precioMax, enStock);
         return ResponseEntity.ok(productosFiltrados);
     }
-
 }

@@ -18,12 +18,22 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Servicio para generar comprobantes en formato PDF.
+ */
 @Service
 @RequiredArgsConstructor
 public class ComprobanteService {
     private final PagoRepository pagoRepository;
     private final OrdenRepository ordenRepository;
 
+    /**
+     * Genera un comprobante de pago en formato PDF.
+     *
+     * @param pagoId ID del pago.
+     * @return El comprobante de pago en un InputStream.
+     * @throws DocumentException Si ocurre un error al generar el documento PDF.
+     */
     @Transactional(readOnly = true)
     public ByteArrayInputStream generarComprobante(Long pagoId) throws DocumentException {
         Pago pago = pagoRepository.findById(pagoId)

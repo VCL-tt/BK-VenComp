@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador REST para manejar las operaciones relacionadas con los comentarios.
+ */
 @RestController
 @RequestMapping("/comentarios")
 @RequiredArgsConstructor
@@ -21,6 +24,13 @@ public class ComentarioController {
     private final ComentarioService comentarioService;
     private final JwtService jwtService;
 
+    /**
+     * Agrega un nuevo comentario a un producto.
+     *
+     * @param comentario Detalles del comentario a agregar.
+     * @param request HttpServletRequest para obtener el token JWT.
+     * @return El comentario agregado.
+     */
     @PostMapping("/agregar")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ComentarioDTO> agregarComentario(@RequestBody Comentario comentario, HttpServletRequest request) {
@@ -36,12 +46,18 @@ public class ComentarioController {
                 nuevoComentario.getContenido(),
                 nuevoComentario.getUsuario().getId(),
                 nuevoComentario.getUsuario().getUsername(),
-                nuevoComentario.getFecha() // Incluir la fecha de creación
+                nuevoComentario.getFecha()
         );
 
         return ResponseEntity.ok(responseDTO);
     }
 
+    /**
+     * Lista todos los comentarios de un producto.
+     *
+     * @param productoId ID del producto.
+     * @return Lista de comentarios del producto.
+     */
     @GetMapping("/producto/{productoId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<ComentarioDTO>> listarComentariosPorProducto(@PathVariable Long productoId) {
@@ -53,12 +69,20 @@ public class ComentarioController {
                         c.getContenido(),
                         c.getUsuario().getId(),
                         c.getUsuario().getUsername(),
-                        c.getFecha() // Incluir la fecha de creación
+                        c.getFecha()
                 ))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Edita un comentario.
+     *
+     * @param id ID del comentario a editar.
+     * @param nuevoContenidoMap Nuevo contenido del comentario.
+     * @param request HttpServletRequest para obtener el token JWT.
+     * @return El comentario editado.
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ComentarioDTO> editarComentario(@PathVariable Long id, @RequestBody Map<String, String> nuevoContenidoMap, HttpServletRequest request) {
@@ -74,11 +98,18 @@ public class ComentarioController {
                 comentarioActualizado.getContenido(),
                 comentarioActualizado.getUsuario().getId(),
                 comentarioActualizado.getUsuario().getUsername(),
-                comentarioActualizado.getFecha() // Incluir la fecha de creación
+                comentarioActualizado.getFecha()
         );
         return ResponseEntity.ok(responseDTO);
     }
 
+    /**
+     * Elimina un comentario.
+     *
+     * @param id ID del comentario a eliminar.
+     * @param request HttpServletRequest para obtener el token JWT.
+     * @return Respuesta vacía si la eliminación fue exitosa.
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> eliminarComentario(@PathVariable Long id, HttpServletRequest request) {

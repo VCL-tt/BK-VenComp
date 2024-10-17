@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Controlador REST para manejar las operaciones relacionadas con los pagos.
+ */
 @RestController
 @RequestMapping("/pagos")
 @RequiredArgsConstructor
@@ -32,6 +34,12 @@ public class PagoController {
     private final PagoService pagoService;
     private static final Logger logger = LoggerFactory.getLogger(PagoController.class);
 
+    /**
+     * Realiza un pago para una orden.
+     *
+     * @param pago Detalles del pago a realizar.
+     * @return El pago realizado.
+     */
     @PostMapping("/realizar")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Pago> realizarPago(@RequestBody Pago pago) {
@@ -59,6 +67,12 @@ public class PagoController {
         return ResponseEntity.ok(nuevoPago);
     }
 
+    /**
+     * Lista los pagos de una orden.
+     *
+     * @param ordenId ID de la orden.
+     * @return Lista de pagos de la orden.
+     */
     @GetMapping("/orden/{ordenId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<Pago>> listarPagosPorOrden(@PathVariable Long ordenId) {
@@ -66,6 +80,12 @@ public class PagoController {
         return ResponseEntity.ok(pagos);
     }
 
+    /**
+     * Genera un comprobante de pago en formato PDF para una orden y lo descarga.
+     *
+     * @param ordenId ID de la orden.
+     * @return El comprobante de pago en formato PDF.
+     */
     @GetMapping("/comprobante/orden/{ordenId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<InputStreamResource> descargarComprobantePorOrden(@PathVariable Long ordenId) {
@@ -73,10 +93,10 @@ public class PagoController {
         try {
             out = pagoService.generarComprobantePorOrden(ordenId);
         } catch (DocumentException e) {
-            logger.error("Error al generar el comprobante para la orden con ID: " + ordenId);
+            logger.error("Error al generar el comprobante para la orden con ID: " + ordenId, e);
             return ResponseEntity.status(500).build();
         } catch (RuntimeException e) {
-            logger.error("Pago no encontrado para la orden con ID: " + ordenId);
+            logger.error("Pago no encontrado para la orden con ID: " + ordenId, e);
             return ResponseEntity.status(404).body(null); // Devuelve 404 si no se encuentra el pago para la orden
         }
 

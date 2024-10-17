@@ -14,12 +14,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Controlador REST para manejar las operaciones relacionadas con las órdenes de compra.
+ */
 @RestController
 @RequestMapping("/ordenes")
 @RequiredArgsConstructor
 public class OrdenController {
     private final OrdenService ordenService;
 
+    /**
+     * Lista todas las órdenes de un usuario.
+     *
+     * @param usuarioId ID del usuario.
+     * @return Lista de órdenes del usuario.
+     */
     @GetMapping("/usuario/{usuarioId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<OrdenDTO>> listarOrdenesPorUsuario(@PathVariable Long usuarioId) {
@@ -27,6 +36,12 @@ public class OrdenController {
         return ResponseEntity.ok(ordenes);
     }
 
+    /**
+     * Obtiene la orden activa de un usuario.
+     *
+     * @param usuarioId ID del usuario.
+     * @return La orden activa del usuario.
+     */
     @GetMapping("/usuario/{usuarioId}/activa")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Orden> obtenerOrdenActiva(@PathVariable Long usuarioId) {
@@ -38,6 +53,13 @@ public class OrdenController {
         }
     }
 
+    /**
+     * Crea una nueva orden de compra.
+     *
+     * @param usuarioId ID del usuario que realiza la orden.
+     * @param productoIds IDs de los productos en la orden.
+     * @return La orden creada.
+     */
     @PostMapping("/crear")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Orden> crearOrden(@RequestParam Long usuarioId, @RequestBody Set<Long> productoIds) {
@@ -45,6 +67,12 @@ public class OrdenController {
         return ResponseEntity.ok(nuevaOrden);
     }
 
+    /**
+     * Agrega un producto al carrito del usuario.
+     *
+     * @param datos Mapa con el ID del usuario y el ID del producto.
+     * @return La orden actualizada.
+     */
     @PostMapping("/agregarProducto")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Orden> agregarProductoAlCarrito(@RequestBody Map<String, Long> datos) {
@@ -54,6 +82,13 @@ public class OrdenController {
         return ResponseEntity.ok(ordenActualizada);
     }
 
+    /**
+     * Actualiza una orden de compra.
+     *
+     * @param id ID de la orden a actualizar.
+     * @param orden Nueva información de la orden.
+     * @return La orden actualizada.
+     */
     @PutMapping("/{id}/actualizar")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Orden> actualizarOrden(@PathVariable Long id, @RequestBody Orden orden) {
@@ -61,18 +96,31 @@ public class OrdenController {
         return ResponseEntity.ok(ordenActualizada);
     }
 
+    /**
+     * Elimina un producto de una orden.
+     *
+     * @param id ID de la orden.
+     * @param productoId ID del producto a eliminar.
+     * @return La orden actualizada.
+     */
     @DeleteMapping("/{id}/producto/{productoId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> eliminarProductoDeLaOrden(@PathVariable Long id, @PathVariable Long productoId) {
+    public ResponseEntity<OrdenDTO> eliminarProductoDeLaOrden(@PathVariable Long id, @PathVariable Long productoId) {
         try {
             Orden ordenActualizada = ordenService.eliminarProductoDeLaOrden(id, productoId);
             OrdenDTO ordenDTO = ordenService.convertirADTO(ordenActualizada);
             return ResponseEntity.ok(ordenDTO);
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
+    /**
+     * Elimina una orden de compra.
+     *
+     * @param id ID de la orden a eliminar.
+     * @return Respuesta vacía si la eliminación fue exitosa.
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> eliminarOrden(@PathVariable Long id) {
