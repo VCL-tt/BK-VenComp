@@ -3,7 +3,7 @@ package com.example.ventaComputadora.webController;
 import com.example.ventaComputadora.domain.entity.email.EmailRequest;
 import com.example.ventaComputadora.domain.entity.email.PasswordUpdateRequest;
 import com.example.ventaComputadora.domain.entity.email.TokenValidationRequest;
-import com.example.ventaComputadora.services.PasswordResetService;
+import com.example.ventaComputadora.services.implement.PasswordResetService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

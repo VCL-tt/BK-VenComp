@@ -1,7 +1,7 @@
-package com.example.ventaComputadora.services;
+package com.example.ventaComputadora.services.implement;
 
 import com.example.ventaComputadora.domain.DTO.UsuarioDTO;
-import com.example.ventaComputadora.domain.entity.Role;
+import com.example.ventaComputadora.domain.entity.enums.Role;
 import com.example.ventaComputadora.domain.entity.Usuario;
 import com.example.ventaComputadora.infra.repository.UsuarioRepository;
 import com.example.ventaComputadora.infra.security.JwtService;
@@ -11,6 +11,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -147,4 +151,26 @@ public class UsuarioService {
         usuario.getFavoritos().forEach(favorito -> favorito.setUsuario(null));
         usuarioRepository.delete(usuario);
     }
+
+    public Usuario getAuthenticatedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof Usuario) {
+            return (Usuario) principal;
+        } else if (principal instanceof UserDetails) {
+            // Si el principal es una implementación de UserDetails, obtén el nombre de usuario y busca el usuario en la base de datos
+            String username = ((UserDetails) principal).getUsername();
+            return usuarioRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+        } else if (principal instanceof String) {
+            // Si el principal es un String (nombre de usuario), realiza la búsqueda en la base de datos
+            String username = (String) principal;
+            return usuarioRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+        } else {
+            throw new ClassCastException("No se pudo convertir el principal a Usuario");
+        }
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.ventaComputadora.domain.entity;
 
+import com.example.ventaComputadora.domain.entity.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;

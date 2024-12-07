@@ -1,4 +1,4 @@
-package com.example.ventaComputadora.services;
+package com.example.ventaComputadora.services.implement;
 
 import com.example.ventaComputadora.domain.DTO.FavoritoDTO;
 import com.example.ventaComputadora.domain.entity.Favorito;

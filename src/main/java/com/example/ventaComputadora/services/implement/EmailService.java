@@ -1,4 +1,4 @@
-package com.example.ventaComputadora.services;
+package com.example.ventaComputadora.services.implement;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

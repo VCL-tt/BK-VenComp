@@ -2,7 +2,7 @@ package com.example.ventaComputadora.webController;
 
 import com.example.ventaComputadora.domain.DTO.OrdenDTO;
 import com.example.ventaComputadora.domain.entity.Orden;
-import com.example.ventaComputadora.services.OrdenService;
+import com.example.ventaComputadora.services.implement.OrdenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

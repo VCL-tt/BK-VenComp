@@ -2,7 +2,7 @@ package com.example.ventaComputadora.webController;
 
 import com.example.ventaComputadora.domain.DTO.FavoritoDTO;
 import com.example.ventaComputadora.domain.entity.Favorito;
-import com.example.ventaComputadora.services.FavoritoService;
+import com.example.ventaComputadora.services.implement.FavoritoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

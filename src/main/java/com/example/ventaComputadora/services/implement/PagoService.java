@@ -1,6 +1,7 @@
-package com.example.ventaComputadora.services;
+package com.example.ventaComputadora.services.implement;
 
 import com.example.ventaComputadora.domain.entity.*;
+import com.example.ventaComputadora.domain.entity.enums.EstadoOrden;
 import com.example.ventaComputadora.infra.repository.OrdenRepository;
 import com.example.ventaComputadora.infra.repository.PagoRepository;
 import com.itextpdf.text.*;
@@ -134,27 +135,6 @@ public class PagoService {
 
             document.add(productTable);
 
-            // Especificaciones del producto
-            if (!producto.getEspecificacionesDisponibles().isEmpty()) {
-                PdfPTable specsTable = new PdfPTable(2);
-                specsTable.setWidthPercentage(80);
-                specsTable.setSpacingBefore(5f);
-                specsTable.setWidths(new int[]{1, 2});
-
-                PdfPCell headerCell = new PdfPCell(new Phrase("Especificaciones", boldFont));
-                headerCell.setColspan(2);
-                headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                headerCell.setPadding(5);
-                headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                specsTable.addCell(headerCell);
-
-                for (ProductoEspecificacion especificacion : producto.getEspecificacionesDisponibles()) {
-                    specsTable.addCell(createCell(especificacion.getEspecificacion().getNombre(), normalFont, Element.ALIGN_LEFT));
-                    specsTable.addCell(createCell(String.valueOf(especificacion.getCantidad()), normalFont, Element.ALIGN_LEFT));
-                }
-
-                document.add(specsTable);
-            }
 
             document.add(new Paragraph(" ")); // Espacio en blanco entre productos
         }

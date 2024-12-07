@@ -1,4 +1,4 @@
-package com.example.ventaComputadora.services;
+package com.example.ventaComputadora.services.implement;
 
 import com.example.ventaComputadora.domain.entity.PasswordResetToken;
 import com.example.ventaComputadora.domain.entity.Usuario;

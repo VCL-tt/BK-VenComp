@@ -1,6 +1,6 @@
 package com.example.ventaComputadora.webController;
 
-import com.example.ventaComputadora.services.EmailService;
+import com.example.ventaComputadora.services.implement.EmailService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

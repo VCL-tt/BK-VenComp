@@ -1,5 +1,7 @@
 package com.example.ventaComputadora.domain.entity;
 
+import com.example.ventaComputadora.domain.entity.enums.CategoriaProducto;
+import com.example.ventaComputadora.domain.entity.enums.TipoProducto;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -37,11 +39,16 @@ public class Producto {
     @Column(nullable = false)
     private int stock;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CategoriaProducto categoria;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoProducto tipo;
+
     @ManyToMany(mappedBy = "productos", fetch = FetchType.LAZY)
     private Set<Orden> ordenes = new HashSet<>();
-
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ProductoEspecificacion> especificacionesDisponibles = new HashSet<>();
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comentario> comentarios = new HashSet<>();
@@ -49,14 +56,13 @@ public class Producto {
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Favorito> favoritos = new HashSet<>();
 
-    public Producto(Long id, String nombre, double precio, String descripcion, String imagen, int stock, Set<ProductoEspecificacion> especificacionesDisponibles, Set<Comentario> comentarios, Set<Favorito> favoritos) {
+    public Producto(Long id, String nombre, double precio, String descripcion, String imagen, int stock, Set<Comentario> comentarios, Set<Favorito> favoritos) {
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
         this.descripcion = descripcion;
         this.imagen = imagen;
         this.stock = stock;
-        this.especificacionesDisponibles = especificacionesDisponibles;
         this.comentarios = comentarios;
         this.favoritos = favoritos;
     }

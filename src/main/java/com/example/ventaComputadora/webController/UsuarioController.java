@@ -4,7 +4,7 @@ import com.example.ventaComputadora.domain.DTO.UsuarioDTO;
 import com.example.ventaComputadora.domain.entity.Usuario;
 import com.example.ventaComputadora.infra.security.LoginRequest;
 import com.example.ventaComputadora.infra.security.TokenResponse;
-import com.example.ventaComputadora.services.UsuarioService;
+import com.example.ventaComputadora.services.implement.UsuarioService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

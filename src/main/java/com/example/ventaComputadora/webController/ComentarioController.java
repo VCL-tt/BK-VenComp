@@ -2,7 +2,7 @@ package com.example.ventaComputadora.webController;
 
 import com.example.ventaComputadora.domain.DTO.ComentarioDTO;
 import com.example.ventaComputadora.domain.entity.Comentario;
-import com.example.ventaComputadora.services.ComentarioService;
+import com.example.ventaComputadora.services.implement.ComentarioService;
 import com.example.ventaComputadora.infra.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

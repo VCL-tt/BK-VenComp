@@ -1,9 +1,9 @@
-package com.example.ventaComputadora.services;
+package com.example.ventaComputadora.services.implement;
 
 import com.example.ventaComputadora.domain.DTO.OrdenDTO;
 import com.example.ventaComputadora.domain.DTO.ProductoDTO;
 import com.example.ventaComputadora.domain.DTO.UsuarioDTO;
-import com.example.ventaComputadora.domain.entity.EstadoOrden;
+import com.example.ventaComputadora.domain.entity.enums.EstadoOrden;
 import com.example.ventaComputadora.domain.entity.Orden;
 import com.example.ventaComputadora.domain.entity.Producto;
 import com.example.ventaComputadora.domain.entity.Usuario;

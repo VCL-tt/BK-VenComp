@@ -1,11 +1,11 @@
 package com.example.ventaComputadora.webController;
 
-import com.example.ventaComputadora.domain.entity.EstadoOrden;
+import com.example.ventaComputadora.domain.entity.enums.EstadoOrden;
 import com.example.ventaComputadora.domain.entity.Orden;
 import com.example.ventaComputadora.domain.entity.Pago;
 import com.example.ventaComputadora.infra.repository.OrdenRepository;
 import com.example.ventaComputadora.infra.repository.PagoRepository;
-import com.example.ventaComputadora.services.PagoService;
+import com.example.ventaComputadora.services.implement.PagoService;
 import com.itextpdf.text.DocumentException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
